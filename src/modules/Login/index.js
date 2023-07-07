@@ -1,12 +1,15 @@
 import React, { useState } from "react";
 import { Card, Button, Input } from "antd";
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from "firebase/auth";
-import app from "../../firebase";
+import { auth } from "../../firebase";
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../../components/AuthContext'; // Import the AuthContext
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [user, setUser] = useState(null);
+  const navigate = useNavigate();
+  const { setUser } = useAuth(); // Get the setUser function from AuthContext
 
   const handleEmailChange = (e) => {
     setEmail(e.target.value);
@@ -17,7 +20,6 @@ const Login = () => {
   };
 
   const handleSignUp = () => {
-    const auth = getAuth(app);
     createUserWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
         const user = userCredential.user;
@@ -35,25 +37,29 @@ const Login = () => {
   };
 
   const handleLogin = () => {
-    const auth = getAuth(app);
-    signInWithEmailAndPassword(auth, email, password)
-      .then((userCredential) => {
-        const user = userCredential.user;
-        console.log("User logged in:", user);
-        setUser(user);
-        window.alert("Login successful");
-      })
-      .catch((error) => {
-        console.log("Login error:", error.message);
-        window.alert("Login failed: " + error.message);
-      });
+    if ((email === "chloemallc@gmail.com" || email === "adminchloemall@gmail.com") && password === "jimmymutinda1998") {
+      // Navigate to Orders for specific emails and passwords
+      navigate('/orders');
+    } else {
+      signInWithEmailAndPassword(auth, email, password)
+        .then((userCredential) => {
+          const user = userCredential.user;
+          console.log("User logged in:", user);
+          setUser(user); // Set the user object in AuthContext
+          window.alert("Login successful");
+          navigate('/cart'); // Navigate to cart after successful login
+        })
+        .catch((error) => {
+          console.log("Login error:", error.message);
+          window.alert("Login failed: " + error.message);
+        });
+    }
   };
 
   const handleSignOut = () => {
-    const auth = getAuth(app);
     signOut(auth)
       .then(() => {
-        setUser(null);
+        setUser(null); // Set the user object to null in AuthContext
         window.alert("Sign out successful");
       })
       .catch((error) => {
@@ -79,15 +85,12 @@ const Login = () => {
       <Button type="primary" onClick={handleSignUp} style={{ marginRight: 10 }}>
         Sign Up
       </Button>
-      {user && (
-        <Button type="primary" onClick={handleSignOut} style={{ marginRight: 10, backgroundColor:'red' }}>
-          Sign Out
-        </Button>
-      )}
+      <Button type="primary" onClick={handleSignOut} style={{ marginRight: 10, backgroundColor: 'red' }}>
+        Sign Out
+      </Button>
       <Button type="primary" onClick={handleLogin}>
         Login
       </Button>
-      
     </Card>
   );
 };

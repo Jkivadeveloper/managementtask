@@ -32,9 +32,9 @@ const videos = [
 
 const videoDuration = 28000; // Duration for each video in milliseconds
 
-const Home = () => {
+const Tvs = () => {
   const navigate = useNavigate();
-  const [products, setProducts] = useState([]);
+  const [tvs, setTvs] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [searchText, setSearchText] = useState('');
   const pageSize = 16;
@@ -43,21 +43,21 @@ const Home = () => {
 
   useEffect(() => {
     const db = getFirestore();
-    const productsCollection = collection(db, 'products');
+    const tvsCollection = collection(db, 'tvs');
 
-    const unsubscribe = onSnapshot(productsCollection, (snapshot) => {
-      const updatedProducts = snapshot.docs.map((doc) => ({
+    const unsubscribe = onSnapshot(tvsCollection, (snapshot) => {
+      const updatedTvs = snapshot.docs.map((doc) => ({
         id: doc.id,
         ...doc.data(),
       }));
-      setProducts(updatedProducts);
+      setTvs(updatedTvs);
     });
 
     return () => unsubscribe();
   }, []);
 
-  const handleNavigateToHomeDetail = (productId) => {
-    navigate(`/homedetail/${productId}`);
+  const handleNavigateToTvsDetail = (tvId) => {
+    navigate(`/tvs/${tvId}`);
   };
 
   const handleCartClick = () => {
@@ -70,17 +70,15 @@ const Home = () => {
 
   const startIndex = (currentPage - 1) * pageSize;
   const endIndex = startIndex + pageSize;
-  const currentProducts = products.slice(startIndex, endIndex);
+  const currentTvs = tvs.slice(startIndex, endIndex);
 
-  const filteredProducts = products.filter((product) =>
-    product.name.toLowerCase().includes(searchText.toLowerCase())
+  const filteredTvs = tvs.filter((tv) =>
+    tv.name.toLowerCase().includes(searchText.toLowerCase())
   );
 
-  const totalPages = Math.ceil(filteredProducts.length / pageSize);
-  const currentPageProducts =
-    currentPage === 1
-      ? filteredProducts.slice(0, pageSize)
-      : filteredProducts.slice(startIndex, endIndex);
+  const totalPages = Math.ceil(filteredTvs.length / pageSize);
+  const currentPageTvs =
+    currentPage === 1 ? filteredTvs.slice(0, pageSize) : filteredTvs.slice(startIndex, endIndex);
 
   const [currentVideoIndex, setCurrentVideoIndex] = useState(0);
 
@@ -100,7 +98,7 @@ const Home = () => {
 
   return (
     <Card
-      title="Home"
+      title="Tvs"
       style={{ margin: 20 }}
       extra={
         <React.Fragment>
@@ -113,46 +111,47 @@ const Home = () => {
         </React.Fragment>
       }
     >
-      <ReactPlayer
-        url={videos[currentVideoIndex].url}
-        width="100%"
-        style={{ marginBottom: 26 }}
-        controls={false}
-        playing
-      />
+      <div style={{ position: 'relative', paddingTop: '56.25%' }}>
+        <ReactPlayer
+          url={videos[currentVideoIndex].url}
+          width="100%"
+          height="100%"
+          style={{ position: 'absolute', top: 0, left: 0 }}
+          controls={false}
+          playing
+        />
+      </div>
 
       <Input.Search
         value={searchText}
         onChange={(e) => setSearchText(e.target.value)}
-        placeholder="Search by product name"
+        placeholder="Search by tv name"
         style={{ width: '100%', height: 40, marginBottom: 16 }}
       />
 
-      <Row gutter={[16, 16]} justify="center">
-        {currentPageProducts.map((item) => (
-          <Col xs={24} sm={12} md={8} lg={6} xl={6} key={item.id}>
+      <Row gutter={[16, 16]}>
+        {currentPageTvs.map((item) => (
+          <Col xs={24} sm={12} md={8} lg={6} key={item.id}>
             <Card
               hoverable
-              onClick={() => handleNavigateToHomeDetail(item.id)}
+              onClick={() => handleNavigateToTvsDetail(item.id)}
               cover={
                 <img
                   src={item.image}
-                  alt="Product"
+                  alt="Tvs"
                   style={{ width: '100%', height: '200px', objectFit: 'cover' }}
                 />
               }
-              style={{ marginBottom: 16 }}
             >
               <Card.Meta title={item.name} description={`Price: Ksh. ${item.price}`} />
             </Card>
           </Col>
         ))}
       </Row>
-
       <Pagination
         current={currentPage}
         pageSize={pageSize}
-        total={filteredProducts.length}
+        total={filteredTvs.length}
         onChange={handlePageChange}
         style={{ marginTop: 20, textAlign: 'center' }}
         showSizeChanger={false}
@@ -165,4 +164,4 @@ const Home = () => {
   );
 };
 
-export default Home;
+export default Tvs;

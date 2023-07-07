@@ -1,3 +1,4 @@
+// Phones.js
 import React, { useEffect, useState } from 'react';
 import { Card, Col, Row, Pagination, Input, Badge } from 'antd';
 import { useNavigate } from 'react-router-dom';
@@ -32,32 +33,32 @@ const videos = [
 
 const videoDuration = 28000; // Duration for each video in milliseconds
 
-const Home = () => {
+const Phones = () => {
   const navigate = useNavigate();
-  const [products, setProducts] = useState([]);
+  const [phones, setPhones] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [searchText, setSearchText] = useState('');
   const pageSize = 16;
-
+  
   const { cartItems } = useCartContext(); // Access cartItems from the CartContext
 
   useEffect(() => {
     const db = getFirestore();
-    const productsCollection = collection(db, 'products');
+    const phonesCollection = collection(db, 'phones');
 
-    const unsubscribe = onSnapshot(productsCollection, (snapshot) => {
-      const updatedProducts = snapshot.docs.map((doc) => ({
+    const unsubscribe = onSnapshot(phonesCollection, (snapshot) => {
+      const updatedPhones = snapshot.docs.map((doc) => ({
         id: doc.id,
         ...doc.data(),
       }));
-      setProducts(updatedProducts);
+      setPhones(updatedPhones);
     });
 
     return () => unsubscribe();
   }, []);
 
-  const handleNavigateToHomeDetail = (productId) => {
-    navigate(`/homedetail/${productId}`);
+  const handleNavigateToPhonesDetail = (phoneId) => {
+    navigate(`/phone/${phoneId}`);
   };
 
   const handleCartClick = () => {
@@ -70,17 +71,17 @@ const Home = () => {
 
   const startIndex = (currentPage - 1) * pageSize;
   const endIndex = startIndex + pageSize;
-  const currentProducts = products.slice(startIndex, endIndex);
+  const currentPhones = phones.slice(startIndex, endIndex);
 
-  const filteredProducts = products.filter((product) =>
-    product.name.toLowerCase().includes(searchText.toLowerCase())
+  const filteredPhones = phones.filter((phone) =>
+    phone.name.toLowerCase().includes(searchText.toLowerCase())
   );
 
-  const totalPages = Math.ceil(filteredProducts.length / pageSize);
-  const currentPageProducts =
+  const totalPages = Math.ceil(filteredPhones.length / pageSize);
+  const currentPagePhones =
     currentPage === 1
-      ? filteredProducts.slice(0, pageSize)
-      : filteredProducts.slice(startIndex, endIndex);
+      ? filteredPhones.slice(0, pageSize)
+      : filteredPhones.slice(startIndex, endIndex);
 
   const [currentVideoIndex, setCurrentVideoIndex] = useState(0);
 
@@ -100,7 +101,7 @@ const Home = () => {
 
   return (
     <Card
-      title="Home"
+      title="Phones"
       style={{ margin: 20 }}
       extra={
         <React.Fragment>
@@ -113,31 +114,34 @@ const Home = () => {
         </React.Fragment>
       }
     >
-      <ReactPlayer
-        url={videos[currentVideoIndex].url}
-        width="100%"
-        style={{ marginBottom: 26 }}
-        controls={false}
-        playing
-      />
+      <div style={{ position: 'relative', paddingTop: '56.25%' }}>
+        <ReactPlayer
+          url={videos[currentVideoIndex].url}
+          width="100%"
+          height="100%"
+          style={{ position: 'absolute', top: 0, left: 0 }}
+          controls={false}
+          playing
+        />
+      </div>
 
       <Input.Search
         value={searchText}
         onChange={(e) => setSearchText(e.target.value)}
-        placeholder="Search by product name"
+        placeholder="Search by phone name"
         style={{ width: '100%', height: 40, marginBottom: 16 }}
       />
 
       <Row gutter={[16, 16]} justify="center">
-        {currentPageProducts.map((item) => (
+        {currentPagePhones.map((item) => (
           <Col xs={24} sm={12} md={8} lg={6} xl={6} key={item.id}>
             <Card
               hoverable
-              onClick={() => handleNavigateToHomeDetail(item.id)}
+              onClick={() => handleNavigateToPhonesDetail(item.id)}
               cover={
                 <img
                   src={item.image}
-                  alt="Product"
+                  alt="Phone"
                   style={{ width: '100%', height: '200px', objectFit: 'cover' }}
                 />
               }
@@ -148,11 +152,10 @@ const Home = () => {
           </Col>
         ))}
       </Row>
-
       <Pagination
         current={currentPage}
         pageSize={pageSize}
-        total={filteredProducts.length}
+        total={filteredPhones.length}
         onChange={handlePageChange}
         style={{ marginTop: 20, textAlign: 'center' }}
         showSizeChanger={false}
@@ -165,4 +168,4 @@ const Home = () => {
   );
 };
 
-export default Home;
+export default Phones;

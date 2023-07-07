@@ -1,3 +1,4 @@
+// Fashion.js
 import React, { useEffect, useState } from 'react';
 import { Card, Col, Row, Pagination, Input, Badge } from 'antd';
 import { useNavigate } from 'react-router-dom';
@@ -32,9 +33,9 @@ const videos = [
 
 const videoDuration = 28000; // Duration for each video in milliseconds
 
-const Home = () => {
+const Fashion = () => {
   const navigate = useNavigate();
-  const [products, setProducts] = useState([]);
+  const [fashions, setFashions] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [searchText, setSearchText] = useState('');
   const pageSize = 16;
@@ -43,21 +44,21 @@ const Home = () => {
 
   useEffect(() => {
     const db = getFirestore();
-    const productsCollection = collection(db, 'products');
+    const fashionsCollection = collection(db, 'fashions');
 
-    const unsubscribe = onSnapshot(productsCollection, (snapshot) => {
-      const updatedProducts = snapshot.docs.map((doc) => ({
+    const unsubscribe = onSnapshot(fashionsCollection, (snapshot) => {
+      const updatedFashions = snapshot.docs.map((doc) => ({
         id: doc.id,
         ...doc.data(),
       }));
-      setProducts(updatedProducts);
+      setFashions(updatedFashions);
     });
 
     return () => unsubscribe();
   }, []);
 
-  const handleNavigateToHomeDetail = (productId) => {
-    navigate(`/homedetail/${productId}`);
+  const handleNavigateToFashionDetail = (fashionId) => {
+    navigate(`/fashion/${fashionId}`);
   };
 
   const handleCartClick = () => {
@@ -70,17 +71,17 @@ const Home = () => {
 
   const startIndex = (currentPage - 1) * pageSize;
   const endIndex = startIndex + pageSize;
-  const currentProducts = products.slice(startIndex, endIndex);
+  const currentFashions = fashions.slice(startIndex, endIndex);
 
-  const filteredProducts = products.filter((product) =>
-    product.name.toLowerCase().includes(searchText.toLowerCase())
+  const filteredFashions = fashions.filter((fashion) =>
+    fashion.name.toLowerCase().includes(searchText.toLowerCase())
   );
 
-  const totalPages = Math.ceil(filteredProducts.length / pageSize);
-  const currentPageProducts =
+  const totalPages = Math.ceil(filteredFashions.length / pageSize);
+  const currentPageFashions =
     currentPage === 1
-      ? filteredProducts.slice(0, pageSize)
-      : filteredProducts.slice(startIndex, endIndex);
+      ? filteredFashions.slice(0, pageSize)
+      : filteredFashions.slice(startIndex, endIndex);
 
   const [currentVideoIndex, setCurrentVideoIndex] = useState(0);
 
@@ -100,7 +101,7 @@ const Home = () => {
 
   return (
     <Card
-      title="Home"
+      title="Fashion"
       style={{ margin: 20 }}
       extra={
         <React.Fragment>
@@ -113,46 +114,47 @@ const Home = () => {
         </React.Fragment>
       }
     >
-      <ReactPlayer
-        url={videos[currentVideoIndex].url}
-        width="100%"
-        style={{ marginBottom: 26 }}
-        controls={false}
-        playing
-      />
+      <div style={{ position: 'relative', paddingTop: '56.25%' }}>
+        <ReactPlayer
+          url={videos[currentVideoIndex].url}
+          width="100%"
+          height="100%"
+          style={{ position: 'absolute', top: 0, left: 0 }}
+          controls={false}
+          playing
+        />
+      </div>
 
       <Input.Search
         value={searchText}
         onChange={(e) => setSearchText(e.target.value)}
-        placeholder="Search by product name"
+        placeholder="Search by fashion name"
         style={{ width: '100%', height: 40, marginBottom: 16 }}
       />
 
-      <Row gutter={[16, 16]} justify="center">
-        {currentPageProducts.map((item) => (
-          <Col xs={24} sm={12} md={8} lg={6} xl={6} key={item.id}>
+      <Row gutter={[16, 16]}>
+        {currentPageFashions.map((item) => (
+          <Col xs={24} sm={12} md={8} lg={6} key={item.id}>
             <Card
               hoverable
-              onClick={() => handleNavigateToHomeDetail(item.id)}
+              onClick={() => handleNavigateToFashionDetail(item.id)}
               cover={
                 <img
                   src={item.image}
-                  alt="Product"
+                  alt="Fashion"
                   style={{ width: '100%', height: '200px', objectFit: 'cover' }}
                 />
               }
-              style={{ marginBottom: 16 }}
             >
               <Card.Meta title={item.name} description={`Price: Ksh. ${item.price}`} />
             </Card>
           </Col>
         ))}
       </Row>
-
       <Pagination
         current={currentPage}
         pageSize={pageSize}
-        total={filteredProducts.length}
+        total={filteredFashions.length}
         onChange={handlePageChange}
         style={{ marginTop: 20, textAlign: 'center' }}
         showSizeChanger={false}
@@ -165,4 +167,4 @@ const Home = () => {
   );
 };
 
-export default Home;
+export default Fashion;

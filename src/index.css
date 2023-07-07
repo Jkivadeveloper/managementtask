@@ -1,18 +1,18 @@
 .ant-btn-primary {
-  background-color: #3fc060 !important;
-  border-color: #3fc060 !important;
+  background-color: orangered !important;
+  border-color: orangered !important;
 }
 
 .ant-pagination-item-active {
-  border-color: #3fc060 !important;
+  border-color: orangered !important;
 }
 
 li.ant-pagination-item-active a {
-  color: #3fc060 !important;
+  color: orangered !important;
 }
 
 .ant-menu-item-selected {
-  background-color: #3fc060 !important;
+  background-color: orangered !important;
 }
 
 .ant-menu-item-selected span {
@@ -20,5 +20,5 @@ li.ant-pagination-item-active a {
 }
 
 .ant-menu-item-active {
-  color: #3fc060 !important;
+  color: orangered !important;
 }

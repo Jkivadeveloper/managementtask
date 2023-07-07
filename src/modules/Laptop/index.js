@@ -1,3 +1,4 @@
+// Laptop.js
 import React, { useEffect, useState } from 'react';
 import { Card, Col, Row, Pagination, Input, Badge } from 'antd';
 import { useNavigate } from 'react-router-dom';
@@ -32,9 +33,9 @@ const videos = [
 
 const videoDuration = 28000; // Duration for each video in milliseconds
 
-const Home = () => {
+const Laptop = () => {
   const navigate = useNavigate();
-  const [products, setProducts] = useState([]);
+  const [laptops, setLaptops] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [searchText, setSearchText] = useState('');
   const pageSize = 16;
@@ -43,21 +44,21 @@ const Home = () => {
 
   useEffect(() => {
     const db = getFirestore();
-    const productsCollection = collection(db, 'products');
+    const laptopsCollection = collection(db, 'laptops');
 
-    const unsubscribe = onSnapshot(productsCollection, (snapshot) => {
-      const updatedProducts = snapshot.docs.map((doc) => ({
+    const unsubscribe = onSnapshot(laptopsCollection, (snapshot) => {
+      const updatedLaptops = snapshot.docs.map((doc) => ({
         id: doc.id,
         ...doc.data(),
       }));
-      setProducts(updatedProducts);
+      setLaptops(updatedLaptops);
     });
 
     return () => unsubscribe();
   }, []);
 
-  const handleNavigateToHomeDetail = (productId) => {
-    navigate(`/homedetail/${productId}`);
+  const handleNavigateToLaptopDetail = (laptopId) => {
+    navigate(`/laptop/${laptopId}`);
   };
 
   const handleCartClick = () => {
@@ -70,17 +71,15 @@ const Home = () => {
 
   const startIndex = (currentPage - 1) * pageSize;
   const endIndex = startIndex + pageSize;
-  const currentProducts = products.slice(startIndex, endIndex);
+  const currentLaptops = laptops.slice(startIndex, endIndex);
 
-  const filteredProducts = products.filter((product) =>
-    product.name.toLowerCase().includes(searchText.toLowerCase())
+  const filteredLaptops = laptops.filter((laptop) =>
+    laptop.name.toLowerCase().includes(searchText.toLowerCase())
   );
 
-  const totalPages = Math.ceil(filteredProducts.length / pageSize);
-  const currentPageProducts =
-    currentPage === 1
-      ? filteredProducts.slice(0, pageSize)
-      : filteredProducts.slice(startIndex, endIndex);
+  const totalPages = Math.ceil(filteredLaptops.length / pageSize);
+  const currentPageLaptops =
+    currentPage === 1 ? filteredLaptops.slice(0, pageSize) : filteredLaptops.slice(startIndex, endIndex);
 
   const [currentVideoIndex, setCurrentVideoIndex] = useState(0);
 
@@ -100,7 +99,7 @@ const Home = () => {
 
   return (
     <Card
-      title="Home"
+      title="Laptop"
       style={{ margin: 20 }}
       extra={
         <React.Fragment>
@@ -113,31 +112,34 @@ const Home = () => {
         </React.Fragment>
       }
     >
-      <ReactPlayer
-        url={videos[currentVideoIndex].url}
-        width="100%"
-        style={{ marginBottom: 26 }}
-        controls={false}
-        playing
-      />
+      <div style={{ position: 'relative', paddingBottom: '56.25%', marginBottom: 26 }}>
+        <ReactPlayer
+          url={videos[currentVideoIndex].url}
+          width="100%"
+          height="100%"
+          style={{ position: 'absolute', top: 0, left: 0 }}
+          controls={false}
+          playing
+        />
+      </div>
 
       <Input.Search
         value={searchText}
         onChange={(e) => setSearchText(e.target.value)}
-        placeholder="Search by product name"
+        placeholder="Search by laptop name"
         style={{ width: '100%', height: 40, marginBottom: 16 }}
       />
 
       <Row gutter={[16, 16]} justify="center">
-        {currentPageProducts.map((item) => (
+        {currentPageLaptops.map((item) => (
           <Col xs={24} sm={12} md={8} lg={6} xl={6} key={item.id}>
             <Card
               hoverable
-              onClick={() => handleNavigateToHomeDetail(item.id)}
+              onClick={() => handleNavigateToLaptopDetail(item.id)}
               cover={
                 <img
                   src={item.image}
-                  alt="Product"
+                  alt="Laptop"
                   style={{ width: '100%', height: '200px', objectFit: 'cover' }}
                 />
               }
@@ -148,11 +150,10 @@ const Home = () => {
           </Col>
         ))}
       </Row>
-
       <Pagination
         current={currentPage}
         pageSize={pageSize}
-        total={filteredProducts.length}
+        total={filteredLaptops.length}
         onChange={handlePageChange}
         style={{ marginTop: 20, textAlign: 'center' }}
         showSizeChanger={false}
@@ -165,4 +166,4 @@ const Home = () => {
   );
 };
 
-export default Home;
+export default Laptop;
